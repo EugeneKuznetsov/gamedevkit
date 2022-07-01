@@ -1,6 +1,6 @@
 set(TARGET_NAME core)
 set(SOURCES Application.cpp)
-set(LIBS glfwcxx::core glfwcxx::window)
+set(LIBS glfwcxx::core)
 
 add_gdk_target(
     NAME

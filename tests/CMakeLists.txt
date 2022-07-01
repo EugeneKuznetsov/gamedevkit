@@ -1,3 +1,3 @@
 include(TestUtils)
 
-add_test_suite(test_core_Application $<BUILD_INTERFACE:GDK::core>)
+add_test_suite(NAME test_core_Application TARGET_UNDER_TEST core DEPENDENCY_LIBS glfwcxx::core-stub)

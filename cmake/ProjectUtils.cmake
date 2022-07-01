@@ -38,8 +38,10 @@ function(add_gdk_target)
     target_link_libraries(
         ${MAIN_TARGET}
         PUBLIC $<BUILD_INTERFACE:${API_TARGET}>
-        PRIVATE $<$<TARGET_EXISTS:${DETAILS_API_TARGET}>:$<BUILD_INTERFACE:${DETAILS_API_TARGET}>>
-        PRIVATE $<BUILD_INTERFACE:glfwcxx::core>)
+        PRIVATE $<$<TARGET_EXISTS:${DETAILS_API_TARGET}>:$<BUILD_INTERFACE:${DETAILS_API_TARGET}>>)
+    foreach(DEPENDENCY_TARGET IN LISTS ARG_PRIVATE_LIBS)
+        target_link_libraries(${MAIN_TARGET} PRIVATE $<BUILD_INTERFACE:${DEPENDENCY_TARGET}>)
+    endforeach()
 
     add_library(GDK::${MAIN_TARGET} ALIAS ${MAIN_TARGET})
 endfunction()

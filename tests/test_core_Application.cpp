@@ -1,10 +1,16 @@
 #include <gtest/gtest.h>
 
+#include <glfwcxx/CoreStub.hpp>
+
 #include <GDK/Application.hpp>
 
 class gamedevkit_application : public testing::Test {
 public:
-    auto SetUp() -> void { application_ = std::make_unique<gamedevkit::Application>(); }
+    auto SetUp() -> void
+    {
+        glfwcxx::CoreStub::reset();
+        application_ = std::make_unique<gamedevkit::Application>();
+    }
 
 private:
     std::unique_ptr<gamedevkit::Application> application_{nullptr};
@@ -12,6 +18,7 @@ private:
 
 TEST_F(gamedevkit_application, throws_runtime_error_when_glfwcxx_cannot_be_initialized)
 {
+    glfwcxx::CoreStub::init_failure();
     ASSERT_THROW(gamedevkit::Application{}, std::runtime_error);
     ASSERT_THROW((gamedevkit::Application{0, nullptr}), std::runtime_error);
 }
