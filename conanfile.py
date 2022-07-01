@@ -10,12 +10,12 @@ class GameDevKit(ConanFile):
     author = "Eugene Kuznetsov"
     license = "Mozilla Public License Version 2.0"
     description = "A toolkit with infrastructure for OpenGL game development"
-    url = "https://github.com/EugeneKuznetsov/gamedevkit"
+    url = "git@github.com:EugeneKuznetsov/gamedevkit.git"
     scm = {"type": "git", "url": "auto", "revision": "auto"}
     generators = "cmake_find_package"
     settings = "os", "compiler", "arch", "build_type"
     tool_requires = "cmake/[>3.20.x]", "ninja/[^1.11.x]", "gtest/[~1.11.x]"
-    requires = "opengl/system", "glfw/[^3.3.x]", "glew/[^2.2.x]", "glm/[^0.9.x]"
+    requires = "glfwcxx/[>1.1]@gamedev/stable", "glew/[^2.2.x]", "glm/[^0.9.x]"
 
     def __init__(self, output, runner, display_name="", user=None, channel=None):
         super().__init__(output, runner, display_name=display_name, user=user, channel=channel)

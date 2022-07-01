@@ -1,0 +1,5 @@
+function(add_test_suite NAME LINK_LIBRARIES)
+    add_executable(${NAME} "${NAME}.cpp")
+    target_link_libraries(${NAME} PRIVATE GTest::gtest_main ${LINK_LIBRARIES})
+    add_test(NAME ${NAME} COMMAND $<TARGET_FILE:${NAME}>)
+endfunction()
