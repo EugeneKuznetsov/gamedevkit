@@ -11,7 +11,9 @@ function(add_test_suite)
     set(TARGET_UNDER_TEST_API ${TARGET_UNDER_TEST}-api)
 
     add_executable(${MAIN_TARGET} ${SOURCES} $<TARGET_OBJECTS:${TARGET_UNDER_TEST_OBJECTS}>)
-    target_link_libraries(${MAIN_TARGET} PRIVATE GTest::gtest_main ${TARGET_UNDER_TEST_API})
+    target_include_directories(${MAIN_TARGET} PRIVATE ${GLEWSTUB_INCLUDE_DIRECTORIES})
+    target_link_libraries(${MAIN_TARGET} PRIVATE GTest::gtest_main glewstub
+                                                 ${TARGET_UNDER_TEST_API})
     foreach(DEPENDENCY_TARGET IN LISTS ARG_DEPENDENCY_LIBS)
         target_link_libraries(${MAIN_TARGET} PRIVATE ${DEPENDENCY_TARGET})
     endforeach()
