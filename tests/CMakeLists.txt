@@ -7,6 +7,8 @@ add_test_suite(
     test_core_Application
     TARGET_UNDER_TEST
     core
-    DEPENDENCY_LIBS
+    TEST_SUITE_DEPENDENCY_LIBS
     glfwcxx::core-stub
-    glfwcxx::window-stub)
+    glfwcxx::window-stub
+    TARGET_UNDER_TEST_STUB_LIBS
+    glewstub)

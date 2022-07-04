@@ -15,17 +15,15 @@ class gamedevkit_application : public testing::Test {
 public:
     auto SetUp() -> void
     {
-        glew_init_return_value_ = GLEW_OK;
+        gamedevkit::GlewStub::reset();
         glfwcxx::CoreStub::reset();
         glfwcxx::WindowStub::reset();
         application_ = std::make_unique<gamedevkit::Application>();
-        window_ = std::make_unique<gamedevkit::Window>();
+        window_ = std::make_unique<gamedevkit::Window>("", gamedevkit::WindowResolution{100, 100});
     }
 
     std::unique_ptr<gamedevkit::Application> application_{nullptr};
     std::unique_ptr<gamedevkit::Window> window_{nullptr};
-
-    inline static unsigned int glew_init_return_value_{GLEW_OK};
 };
 
 TEST_F(gamedevkit_application, throws_runtime_error_on_construction_when_glfwcxx_cannot_be_initialized)
@@ -55,7 +53,7 @@ TEST_F(gamedevkit_application, throws_runtime_error_when_window_making_context_c
 
 TEST_F(gamedevkit_application, throws_runtime_error_when_gl_functions_were_not_initialized)
 {
-    glew_init_return_value_ = GLEW_OK + 1u;
+    gamedevkit::GlewStub::glew_init_return_value(GLEW_OK + 1u);
     application_->window(std::move(window_));
     ASSERT_THROW(application_->setup(), std::runtime_error);
 }
@@ -76,16 +74,9 @@ TEST_F(gamedevkit_application, successfully_runs_two_game_loops_and_returns_exit
     });
 
     application_->window(std::move(window_)).setup();
-    auto test_case = std::async(std::launch::async, [&app = application_]() -> int { return app->run(); });
 
-    using namespace std::chrono_literals;
-    ASSERT_EQ(std::future_status::ready, test_case.wait_for(1s));
-    EXPECT_EQ(EXIT_SUCCESS, test_case.get());
+    // TODO: it might stuck, move it to a separate thread of execution with timeout
+    EXPECT_EQ(EXIT_SUCCESS, application_->run());
     EXPECT_EQ(expected_game_loops_count, glfwcxx::WindowStub::poll_events_call_count());
     EXPECT_EQ(expected_game_loops_count, glfwcxx::WindowStub::swap_buffers_call_count());
-}
-
-auto glewInit() -> unsigned int
-{
-    return gamedevkit_application::glew_init_return_value_;
 }

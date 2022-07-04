@@ -1,7 +1,7 @@
 function(add_gdk_target)
     set(options WITH_DETAILS)
     set(oneValueArgs NAME)
-    set(multiValueArgs SOURCES PRIVATE_LIBS)
+    set(multiValueArgs SOURCES PRIVATE_DEPENDENCIES PRIVATE_COMPILE_DEFINITIONS)
     cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     set(MAIN_TARGET ${ARG_NAME})
@@ -21,11 +21,13 @@ function(add_gdk_target)
     endif()
 
     add_library(${OBJECT_TARGET} OBJECT ${ARG_SOURCES})
+    target_sources(${OBJECT_TARGET} INTERFACE ${ARG_SOURCES})
+    target_compile_definitions(${OBJECT_TARGET} PRIVATE ${ARG_PRIVATE_COMPILE_DEFINITIONS})
     target_link_libraries(
         ${OBJECT_TARGET}
         PRIVATE $<BUILD_INTERFACE:${API_TARGET}>
                 $<$<TARGET_EXISTS:${DETAILS_API_TARGET}>:$<BUILD_INTERFACE:${DETAILS_API_TARGET}>>)
-    foreach(DEPENDENCY_TARGET IN LISTS ARG_PRIVATE_LIBS)
+    foreach(DEPENDENCY_TARGET IN LISTS ARG_PRIVATE_DEPENDENCIES)
         if(NOT TARGET ${DEPENDENCY_TARGET})
             message(FATAL_ERROR "${DEPENDENCY_TARGET} is not a real target")
         endif()

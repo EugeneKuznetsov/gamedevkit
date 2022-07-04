@@ -1,5 +1,5 @@
 # OpenGL game development toolkit
 
-## Goal
+Crossplatform implementation of a library with set of classes to speedup development of OpenGL games.
 
-Provide crossplatform implementation of a library for reducing an amount of source code used for bringing up OpenGL infrastructure and its further usage for game development.
+p.s. in development phase

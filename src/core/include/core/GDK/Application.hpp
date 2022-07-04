@@ -18,7 +18,7 @@ public:
     ~Application();
 
 public:
-    auto window(std::unique_ptr<Window>&& window) -> Application&;
+    auto window(std::unique_ptr<Window> window) -> Application&;
 
 public:
     auto setup() -> void;
