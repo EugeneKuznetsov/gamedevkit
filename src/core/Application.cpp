@@ -1,5 +1,6 @@
 #include "GDK/Application.hpp"
 
+#include <chrono>
 #include <cstdlib>
 #include <stdexcept>
 
@@ -69,10 +70,22 @@ auto Application::setup() -> void
 
 auto Application::run() -> int
 {
+    constexpr auto frames_per_second = 60;
+    constexpr auto ms_per_update = std::chrono::milliseconds{1000} / frames_per_second;
+
+    auto previous_update = std::chrono::high_resolution_clock::now();
+    auto lag = std::chrono::duration_cast<std::chrono::nanoseconds>(ms_per_update);
+
     while (false == window_->should_close()) {
+        const auto current_update = std::chrono::high_resolution_clock::now();
+        const auto update_duration = current_update - previous_update;
+        previous_update = current_update;
+        lag += update_duration;
+
         window_->poll_events();
 
-        game_->update();
+        for (; lag >= ms_per_update; lag -= ms_per_update)
+            game_->update();
 
         renderer_->render();
 

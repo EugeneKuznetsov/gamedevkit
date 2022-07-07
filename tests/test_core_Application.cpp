@@ -94,7 +94,7 @@ TEST_F(gamedevkit_application, successfully_runs_two_game_loops_and_returns_exit
             glfwcxx::WindowStub::close_window();
     });
 
-    EXPECT_CALL(*game_, update).Times(testing::Exactly(2));
+    EXPECT_CALL(*game_, update).Times(testing::Exactly(1));
     EXPECT_CALL(*renderer_, render).Times(testing::Exactly(2));
 
     application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_)).setup();
