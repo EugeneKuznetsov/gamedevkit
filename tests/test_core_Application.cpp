@@ -7,6 +7,7 @@
 #include <GL/glew.h>
 
 #include <GDK/AbstractGame.hpp>
+#include <GDK/AbstractRenderer.hpp>
 #include <GDK/Application.hpp>
 #include <GDK/Window.hpp>
 
@@ -14,6 +15,12 @@ class MockedGame : public gamedevkit::AbstractGame {
 public:
     MOCK_METHOD(void, setup, (), (override));
     MOCK_METHOD(void, update, (), (override));
+};
+
+class MockedRenderer : public gamedevkit::AbstractRenderer {
+public:
+    MOCK_METHOD(void, setup, (std::shared_ptr<gamedevkit::AbstractGame>), (override));
+    MOCK_METHOD(void, render, (), (override));
 };
 
 class gamedevkit_application : public testing::Test {
@@ -31,6 +38,7 @@ public:
     std::unique_ptr<gamedevkit::Application> application_{nullptr};
     std::unique_ptr<gamedevkit::Window> window_{nullptr};
     std::shared_ptr<MockedGame> game_{nullptr};
+    std::unique_ptr<MockedRenderer> renderer_{nullptr};
 };
 
 TEST_F(gamedevkit_application, throws_runtime_error_on_construction_when_glfwcxx_cannot_be_initialized)
@@ -56,17 +64,23 @@ TEST_F(gamedevkit_application, throws_runtime_error_when_game_was_not_set_before
     ASSERT_THROW(application_->window(std::move(window_)).setup(), std::runtime_error);
 }
 
+TEST_F(gamedevkit_application, throws_runtime_error_when_renderer_was_not_set_before_setup)
+{
+    ASSERT_THROW(application_->window(std::move(window_)).game(game_).setup(), std::runtime_error);
+}
+
 TEST_F(gamedevkit_application, throws_runtime_error_when_gl_functions_were_not_initialized)
 {
     gamedevkit::GlewStub::glew_init_return_value(GLEW_OK + 1u);
-    application_->window(std::move(window_));
+    application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_));
     ASSERT_THROW(application_->setup(), std::runtime_error);
 }
 
-TEST_F(gamedevkit_application, successfully_configures_window_and_game_when_setup_invoked)
+TEST_F(gamedevkit_application, successfully_configures_window_and_game_and_renderer_when_setup_invoked)
 {
     EXPECT_CALL(*game_, setup).Times(1);
-    ASSERT_NO_THROW(application_->window(std::move(window_)).game(game_).setup());
+    EXPECT_CALL(*renderer_, setup).Times(1);
+    ASSERT_NO_THROW(application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_)).setup());
 }
 
 TEST_F(gamedevkit_application, successfully_runs_two_game_loops_and_returns_exit_success_when_window_should_close)
@@ -82,6 +96,7 @@ TEST_F(gamedevkit_application, successfully_runs_two_game_loops_and_returns_exit
     application_->window(std::move(window_)).game(game_).setup();
 
     EXPECT_CALL(*game_, update).Times(2);
+    EXPECT_CALL(*renderer_, render).Times(2);
 
     // TODO: it might stuck, move it to a separate thread of execution with timeout
     EXPECT_EQ(EXIT_SUCCESS, application_->run());
