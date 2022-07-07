@@ -12,3 +12,12 @@ add_test_suite(
     glfwcxx::window-stub
     TARGET_UNDER_TEST_STUB_LIBS
     glewstub)
+
+add_test_suite(
+    NAME
+    test_core_Window
+    TARGET_UNDER_TEST
+    core
+    TEST_SUITE_DEPENDENCY_LIBS
+    glfwcxx::core-stub
+    glfwcxx::window-stub)

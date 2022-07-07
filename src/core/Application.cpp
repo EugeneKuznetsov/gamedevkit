@@ -1,5 +1,6 @@
 #include "GDK/Application.hpp"
 
+#include <chrono>
 #include <cstdlib>
 #include <stdexcept>
 
@@ -8,6 +9,8 @@
 #include <glfwcxx/Core.hpp>
 
 #include "ApplicationDetails.hpp"
+#include "GDK/AbstractGame.hpp"
+#include "GDK/AbstractRenderer.hpp"
 #include "GDK/Window.hpp"
 
 namespace gamedevkit {
@@ -15,6 +18,8 @@ namespace gamedevkit {
 Application::Application()
     : details_{std::make_unique<Details>()}
     , window_{nullptr}
+    , game_{nullptr}
+    , renderer_{nullptr}
 {
 }
 
@@ -31,21 +36,58 @@ auto Application::window(std::unique_ptr<Window> window) -> Application&
     return *this;
 }
 
+auto Application::game(std::shared_ptr<AbstractGame> game) -> Application&
+{
+    game_ = std::move(game);
+    return *this;
+}
+
+auto Application::renderer(std::unique_ptr<AbstractRenderer> renderer) -> Application&
+{
+    renderer_ = std::move(renderer);
+    return *this;
+}
+
 auto Application::setup() -> void
 {
     if (nullptr == window_)
         throw std::runtime_error("Cannot setup Application without Window being set");
 
+    if (nullptr == game_)
+        throw std::runtime_error("Cannot setup Application without Game being set");
+
+    if (nullptr == renderer_)
+        throw std::runtime_error("Cannot setup Application without Renderer being set");
+
     window_->activate();
 
     if (GLEW_OK != glewInit())
         throw std::runtime_error("Failed to initialize GLEW");
+
+    game_->setup();
+    renderer_->setup(game_);
 }
 
 auto Application::run() -> int
 {
+    constexpr auto frames_per_second = 60;
+    constexpr auto ms_per_update = std::chrono::milliseconds{1000} / frames_per_second;
+
+    auto previous_update = std::chrono::high_resolution_clock::now();
+    auto lag = std::chrono::duration_cast<std::chrono::nanoseconds>(ms_per_update);
+
     while (false == window_->should_close()) {
+        const auto current_update = std::chrono::high_resolution_clock::now();
+        const auto update_duration = current_update - previous_update;
+        previous_update = current_update;
+        lag += update_duration;
+
         window_->poll_events();
+
+        for (; lag >= ms_per_update; lag -= ms_per_update)
+            game_->update();
+
+        renderer_->render();
 
         window_->swap_buffers();
     }
