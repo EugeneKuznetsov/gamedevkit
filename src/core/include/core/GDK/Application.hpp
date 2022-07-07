@@ -4,6 +4,7 @@
 
 namespace gamedevkit {
 
+class AbstractGame;
 class Window;
 
 class Application final {
@@ -19,6 +20,7 @@ public:
 
 public:
     auto window(std::unique_ptr<Window> window) -> Application&;
+    auto game(std::unique_ptr<AbstractGame> game) -> Application&;
 
 public:
     auto setup() -> void;

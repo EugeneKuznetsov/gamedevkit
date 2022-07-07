@@ -8,6 +8,7 @@
 #include <glfwcxx/Core.hpp>
 
 #include "ApplicationDetails.hpp"
+#include "GDK/AbstractGame.hpp"
 #include "GDK/Window.hpp"
 
 namespace gamedevkit {
@@ -28,6 +29,11 @@ Application::~Application() = default;
 auto Application::window(std::unique_ptr<Window> window) -> Application&
 {
     window_ = std::move(window);
+    return *this;
+}
+
+auto Application::game(std::unique_ptr<AbstractGame> /*game*/) -> Application&
+{
     return *this;
 }
 
