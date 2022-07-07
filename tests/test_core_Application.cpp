@@ -25,14 +25,12 @@ public:
         glfwcxx::WindowStub::reset();
         application_ = std::make_unique<gamedevkit::Application>();
         window_ = std::make_unique<gamedevkit::Window>("", gamedevkit::WindowResolution{100, 100});
-        game_ = std::make_unique<MockedGame>();
-        game_ptr_ = game_.get();
+        game_ = std::make_shared<MockedGame>();
     }
 
     std::unique_ptr<gamedevkit::Application> application_{nullptr};
     std::unique_ptr<gamedevkit::Window> window_{nullptr};
-    std::unique_ptr<MockedGame> game_{nullptr};
-    MockedGame* game_ptr_{nullptr};
+    std::shared_ptr<MockedGame> game_{nullptr};
 };
 
 TEST_F(gamedevkit_application, throws_runtime_error_on_construction_when_glfwcxx_cannot_be_initialized)
@@ -67,8 +65,8 @@ TEST_F(gamedevkit_application, throws_runtime_error_when_gl_functions_were_not_i
 
 TEST_F(gamedevkit_application, successfully_configures_window_and_game_when_setup_invoked)
 {
-    EXPECT_CALL(*game_ptr_, setup()).Times(1);
-    ASSERT_NO_THROW(application_->window(std::move(window_)).game(std::move(game_)).setup());
+    EXPECT_CALL(*game_, setup).Times(1);
+    ASSERT_NO_THROW(application_->window(std::move(window_)).game(game_).setup());
 }
 
 TEST_F(gamedevkit_application, successfully_runs_two_game_loops_and_returns_exit_success_when_window_should_close)
@@ -81,9 +79,9 @@ TEST_F(gamedevkit_application, successfully_runs_two_game_loops_and_returns_exit
             glfwcxx::WindowStub::close_window();
     });
 
-    application_->window(std::move(window_)).game(std::move(game_)).setup();
+    application_->window(std::move(window_)).game(game_).setup();
 
-    EXPECT_CALL(*game_ptr_, update()).Times(testing::AtLeast(1));
+    EXPECT_CALL(*game_, update).Times(2);
 
     // TODO: it might stuck, move it to a separate thread of execution with timeout
     EXPECT_EQ(EXIT_SUCCESS, application_->run());

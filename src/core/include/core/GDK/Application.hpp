@@ -20,7 +20,7 @@ public:
 
 public:
     auto window(std::unique_ptr<Window> window) -> Application&;
-    auto game(std::unique_ptr<AbstractGame> game) -> Application&;
+    auto game(std::shared_ptr<AbstractGame> game) -> Application&;
 
 public:
     auto setup() -> void;
@@ -31,6 +31,7 @@ private:
     const std::unique_ptr<Details> details_;
 
     std::unique_ptr<Window> window_;
+    std::shared_ptr<AbstractGame> game_;
 };
 
 }  // namespace gamedevkit

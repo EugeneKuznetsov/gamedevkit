@@ -16,6 +16,7 @@ namespace gamedevkit {
 Application::Application()
     : details_{std::make_unique<Details>()}
     , window_{nullptr}
+    , game_{nullptr}
 {
 }
 
@@ -32,8 +33,9 @@ auto Application::window(std::unique_ptr<Window> window) -> Application&
     return *this;
 }
 
-auto Application::game(std::unique_ptr<AbstractGame> /*game*/) -> Application&
+auto Application::game(std::shared_ptr<AbstractGame> game) -> Application&
 {
+    game_ = std::move(game);
     return *this;
 }
 
@@ -42,16 +44,23 @@ auto Application::setup() -> void
     if (nullptr == window_)
         throw std::runtime_error("Cannot setup Application without Window being set");
 
+    if (nullptr == game_)
+        throw std::runtime_error("Cannot setup Application without Game being set");
+
     window_->activate();
 
     if (GLEW_OK != glewInit())
         throw std::runtime_error("Failed to initialize GLEW");
+
+    game_->setup();
 }
 
 auto Application::run() -> int
 {
     while (false == window_->should_close()) {
         window_->poll_events();
+
+        game_->update();
 
         window_->swap_buffers();
     }
