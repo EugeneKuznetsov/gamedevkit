@@ -43,6 +43,7 @@ auto Application::game(std::shared_ptr<AbstractGame> game) -> Application&
 
 auto Application::renderer(std::unique_ptr<AbstractRenderer> renderer) -> Application&
 {
+    renderer_ = std::move(renderer);
     return *this;
 }
 
@@ -54,12 +55,16 @@ auto Application::setup() -> void
     if (nullptr == game_)
         throw std::runtime_error("Cannot setup Application without Game being set");
 
+    if (nullptr == renderer_)
+        throw std::runtime_error("Cannot setup Application without Renderer being set");
+
     window_->activate();
 
     if (GLEW_OK != glewInit())
         throw std::runtime_error("Failed to initialize GLEW");
 
     game_->setup();
+    renderer_->setup(game_);
 }
 
 auto Application::run() -> int
@@ -68,6 +73,8 @@ auto Application::run() -> int
         window_->poll_events();
 
         game_->update();
+
+        renderer_->render();
 
         window_->swap_buffers();
     }
