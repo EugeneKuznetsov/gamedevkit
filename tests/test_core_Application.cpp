@@ -1,6 +1,3 @@
-#include <chrono>
-#include <future>
-
 #include <gtest/gtest.h>
 
 #include <glfwcxx/CoreStub.hpp>
@@ -41,13 +38,6 @@ TEST_F(gamedevkit_application, successfully_instantiated_when_glfwcxx_can_be_ini
 
 TEST_F(gamedevkit_application, throws_runtime_error_when_window_was_not_set_before_setup)
 {
-    ASSERT_THROW(application_->setup(), std::runtime_error);
-}
-
-TEST_F(gamedevkit_application, throws_runtime_error_when_window_making_context_current_fails)
-{
-    glfwcxx::WindowStub::make_context_current_failure();
-    application_->window(std::move(window_));
     ASSERT_THROW(application_->setup(), std::runtime_error);
 }
 
