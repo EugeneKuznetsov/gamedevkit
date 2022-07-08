@@ -9,6 +9,8 @@ class Window;
 
 namespace gamedevkit {
 
+class Application;
+
 struct WindowResolution {
     int width;
     int height;
@@ -24,16 +26,18 @@ public:
     explicit Window(const std::string& title, const WindowResolution& resolution);
     ~Window();
 
-public:
+private:
     auto activate() -> void;
     auto poll_events() -> void;
     auto swap_buffers() -> void;
 
-public:
+private:
     auto should_close() const -> bool;
 
 private:
     std::unique_ptr<glfwcxx::Window> window_;
+
+    friend class Application;
 };
 
 }  // namespace gamedevkit
