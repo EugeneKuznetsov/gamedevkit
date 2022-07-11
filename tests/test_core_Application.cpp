@@ -9,7 +9,7 @@
 #include <GDK/AbstractGame.hpp>
 #include <GDK/AbstractRenderer.hpp>
 #include <GDK/Application.hpp>
-#include <GDK/Window.hpp>
+#include <GDK/WindowBuilder.hpp>
 
 class MockedGame : public gamedevkit::AbstractGame {
 public:
@@ -31,7 +31,7 @@ public:
         glfwcxx::CoreStub::reset();
         glfwcxx::WindowStub::reset();
         application_ = std::make_unique<gamedevkit::Application>();
-        window_ = std::make_unique<gamedevkit::Window>("", gamedevkit::WindowResolution{100, 100});
+        window_ = gamedevkit::WindowBuilder{}.build("", {0, 0});
         game_ = std::make_shared<MockedGame>();
         renderer_ = std::make_unique<MockedRenderer>();
     }

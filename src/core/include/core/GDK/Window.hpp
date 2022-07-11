@@ -22,8 +22,9 @@ class Window final {
     Window& operator=(const Window&) = delete;
     Window& operator=(Window&&) = delete;
 
+    explicit Window(std::unique_ptr<glfwcxx::Window> window);
+
 public:
-    explicit Window(const std::string& title, const WindowResolution& resolution);
     ~Window();
 
 private:
@@ -38,6 +39,7 @@ private:
     std::unique_ptr<glfwcxx::Window> window_;
 
     friend class Application;
+    friend class WindowBuilder;
 };
 
 }  // namespace gamedevkit
