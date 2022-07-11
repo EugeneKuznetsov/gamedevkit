@@ -29,7 +29,7 @@
         {
             "label": "conan install",
             "type": "shell",
-            "command": "conan install . --install-folder=build",
+            "command": "conan install . --install-folder=build --update",
             "problemMatcher": [],
             "group": "build"
         },
