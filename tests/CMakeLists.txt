@@ -6,7 +6,7 @@ add_test_suite(
     NAME
     test_core_Application
     TARGET_UNDER_TEST
-    Core
+    core
     TEST_SUITE_DEPENDENCY_LIBS
     glfwcxx::core-stub
     glfwcxx::window-stub
@@ -17,7 +17,7 @@ add_test_suite(
     NAME
     test_core_WindowBuilder
     TARGET_UNDER_TEST
-    Core
+    core
     TEST_SUITE_DEPENDENCY_LIBS
     glfwcxx::core-stub
     glfwcxx::window-stub)
