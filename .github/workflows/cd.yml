@@ -37,6 +37,7 @@ jobs:
           conan profile update settings.compiler=${{ matrix.compiler.compiler }} default
           conan profile update settings.compiler.version=${{ matrix.compiler.version }} default
           conan profile update settings.compiler.libcxx=libstdc++11 default
+          conan remote add gamedev-center https://eugenekuznetsov.jfrog.io/artifactory/api/conan/gamedev-conan-local --insert 0
           Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 
       - name: Create package
@@ -46,7 +47,6 @@ jobs:
       - name: Deploy
         run: |
           reference=`conan search gamedevkit --raw`
-          conan remote add gamedev-center https://eugenekuznetsov.jfrog.io/artifactory/api/conan/gamedev-conan-local --insert 0
           conan user -p ${{ secrets.CONAN_REMOTE_TOKEN }} -r gamedev-center ${{ secrets.CONAN_REMOTE_USER }}
           conan upload $reference -r gamedev-center --all --confirm --check
 
@@ -73,6 +73,7 @@ jobs:
           conan profile update settings.build_type=${{ matrix.build_type }} default
           conan profile update settings.compiler='${{ matrix.compiler.compiler }}' default
           conan profile update settings.compiler.version=${{ matrix.compiler.version }} default
+          conan remote add gamedev-center https://eugenekuznetsov.jfrog.io/artifactory/api/conan/gamedev-conan-local --insert 0
 
       - name: Create package
         run: |
@@ -81,6 +82,5 @@ jobs:
       - name: Deploy
         run: |
           $reference=(conan search gamedevkit --raw)
-          conan remote add gamedev-center https://eugenekuznetsov.jfrog.io/artifactory/api/conan/gamedev-conan-local --insert 0
           conan user -p ${{ secrets.CONAN_REMOTE_TOKEN }} -r gamedev-center ${{ secrets.CONAN_REMOTE_USER }}
           conan upload $reference -r gamedev-center --all --confirm --check
