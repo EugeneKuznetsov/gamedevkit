@@ -4,7 +4,6 @@
 #include <glfwcxx/WindowHints.hpp>
 #include <glfwcxx/WindowHelper.hpp>
 
-#include <GDK/Window.hpp>
 #include <GDK/WindowBuilder.hpp>
 
 class gamedevkit_window_builder : public testing::Test {
