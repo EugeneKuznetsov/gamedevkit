@@ -4,8 +4,8 @@
 
 namespace gamedevkit {
 
-Window::Window(const std::string& title, const WindowResolution& resolution)
-    : window_{glfwcxx::Window::create_window({resolution.width, resolution.height}, title)}
+Window::Window(std::unique_ptr<glfwcxx::Window> window)
+    : window_{std::move(window)}
 {
 }
 

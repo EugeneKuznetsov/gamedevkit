@@ -15,7 +15,7 @@ add_test_suite(
 
 add_test_suite(
     NAME
-    test_core_Window
+    test_core_WindowBuilder
     TARGET_UNDER_TEST
     core
     TEST_SUITE_DEPENDENCY_LIBS

@@ -9,7 +9,7 @@
 #include <GDK/AbstractGame.hpp>
 #include <GDK/AbstractRenderer.hpp>
 #include <GDK/Application.hpp>
-#include <GDK/Window.hpp>
+#include <GDK/WindowBuilder.hpp>
 
 class MockedGame : public gamedevkit::AbstractGame {
 public:
@@ -31,7 +31,7 @@ public:
         glfwcxx::CoreStub::reset();
         glfwcxx::WindowStub::reset();
         application_ = std::make_unique<gamedevkit::Application>();
-        window_ = std::make_unique<gamedevkit::Window>("", gamedevkit::WindowResolution{100, 100});
+        window_ = gamedevkit::WindowBuilder{}.build("", {0, 0});
         game_ = std::make_shared<MockedGame>();
         renderer_ = std::make_unique<MockedRenderer>();
     }
@@ -45,6 +45,7 @@ public:
 TEST_F(gamedevkit_application, throws_runtime_error_on_construction_when_glfwcxx_cannot_be_initialized)
 {
     glfwcxx::CoreStub::init_failure();
+
     ASSERT_THROW(gamedevkit::Application{}, std::runtime_error);
     ASSERT_THROW((gamedevkit::Application{0, nullptr}), std::runtime_error);
 }
@@ -74,6 +75,15 @@ TEST_F(gamedevkit_application, throws_runtime_error_when_gl_functions_were_not_i
 {
     gamedevkit::GlewStub::glew_init_return_value(GLEW_OK + 1u);
     application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_));
+
+    ASSERT_THROW(application_->setup(), std::runtime_error);
+}
+
+TEST_F(gamedevkit_application, throws_runtime_error_when_window_making_context_current_fails)
+{
+    glfwcxx::WindowStub::make_context_current_failure();
+    application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_));
+
     ASSERT_THROW(application_->setup(), std::runtime_error);
 }
 
@@ -81,6 +91,7 @@ TEST_F(gamedevkit_application, successfully_configures_window_and_game_and_rende
 {
     EXPECT_CALL(*game_, setup).Times(testing::Exactly(1));
     EXPECT_CALL(*renderer_, setup(testing::_)).Times(testing::Exactly(1));
+
     ASSERT_NO_THROW(application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_)).setup());
 }
 

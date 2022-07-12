@@ -1,5 +1,5 @@
 set(TARGET_NAME core)
-set(SOURCES Application.cpp Window.cpp)
+set(SOURCES Application.cpp Window.cpp WindowBuilder.cpp)
 set(DEPENDENCIES glfwcxx::core glfwcxx::window GLEW::GLEW)
 
 add_gdk_target(
