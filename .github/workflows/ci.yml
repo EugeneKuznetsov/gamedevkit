@@ -76,3 +76,53 @@ jobs:
       - name: Test
         run: |
           conan build . --build-folder=build --test
+
+  package-linux:
+    name: Test package on Ubuntu
+    runs-on: ubuntu-22.04
+    env:
+      DISPLAY: ":99"
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup environment
+        run: |
+          sudo apt-get install -y --no-install-recommends libx11-dev libx11-xcb-dev libfontenc-dev libice-dev libsm-dev libxau-dev \
+            libxaw7-dev libxcomposite-dev libxcursor-dev libxdamage-dev libxdmcp-dev libxext-dev libxfixes-dev libxi-dev libxinerama-dev \
+            libxkbfile-dev libxmu-dev libxmuu-dev libxpm-dev libxrandr-dev libxrender-dev libxres-dev libxss-dev libxt-dev libxtst-dev \
+            libxv-dev libxvmc-dev libxxf86vm-dev xtrans-dev libxcb-render0-dev libxcb-render-util0-dev libxcb-xkb-dev libxcb-icccm4-dev \
+            libxcb-image0-dev libxcb-keysyms1-dev libxcb-randr0-dev libxcb-shape0-dev libxcb-sync-dev libxcb-xfixes0-dev libxcb-xinerama0-dev \
+            xkb-data libxcb-dri3-dev uuid-dev libxcb-util-dev libgl-dev libglx-dev libglu1-mesa-dev libopengl-dev
+          pip3 install conan
+          conan --version
+          conan profile new default --detect
+          conan profile update settings.build_type=Debug default
+          conan profile update settings.compiler=gcc default
+          conan profile update settings.compiler.version=10 default
+          conan profile update settings.compiler.libcxx=libstdc++11 default
+          conan remote add gamedev-center https://eugenekuznetsov.jfrog.io/artifactory/api/conan/gamedev-conan-local --insert 0
+          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+
+      - name: Create package
+        run: |
+          conan create .
+
+  package-windows:
+    name: Test package on Windows
+    runs-on: windows-2019
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup environment
+        run: |
+          pip install conan
+          conan --version
+          conan profile new default --detect
+          conan profile update settings.build_type=Debug default
+          conan profile update settings.compiler="Visual Studio" default
+          conan profile update settings.compiler.version=16 default
+          conan remote add gamedev-center https://eugenekuznetsov.jfrog.io/artifactory/api/conan/gamedev-conan-local --insert 0
+
+      - name: Create package
+        run: |
+          conan create .

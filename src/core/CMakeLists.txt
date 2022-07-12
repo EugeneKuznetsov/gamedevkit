@@ -12,3 +12,4 @@ add_gdk_target(
     PRIVATE_COMPILE_DEFINITIONS
     "GLEW_STATIC"
     WITH_DETAILS)
+install_gdk_target(TARGET_NAME ${TARGET_NAME})
