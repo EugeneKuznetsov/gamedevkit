@@ -1,4 +1,4 @@
-set(TARGET_NAME core)
+set(TARGET_NAME Core)
 set(SOURCES Application.cpp Window.cpp WindowBuilder.cpp)
 set(DEPENDENCIES glfwcxx::core glfwcxx::window GLEW::GLEW)
 
@@ -12,3 +12,4 @@ add_gdk_target(
     PRIVATE_COMPILE_DEFINITIONS
     "GLEW_STATIC"
     WITH_DETAILS)
+install_gdk_target(TARGET_NAME ${TARGET_NAME})

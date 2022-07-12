@@ -45,5 +45,20 @@ function(add_gdk_target)
         target_link_libraries(${MAIN_TARGET} PRIVATE $<BUILD_INTERFACE:${DEPENDENCY_TARGET}>)
     endforeach()
 
-    add_library(GDK::${MAIN_TARGET} ALIAS ${MAIN_TARGET})
+    add_library(GameDevKit::${MAIN_TARGET} ALIAS ${MAIN_TARGET})
+endfunction()
+
+function(install_gdk_target)
+    set(options)
+    set(oneValueArgs TARGET_NAME)
+    set(multiValueArgs)
+    cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    set(GDK_TARGET ${ARG_TARGET_NAME})
+    install(
+        TARGETS ${GDK_TARGET}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/include/${GDK_TARGET}/GDK
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 endfunction()

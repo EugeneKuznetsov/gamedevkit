@@ -58,6 +58,16 @@
                 "$gcc"
             ],
             "group": "test"
+        },
+        {
+            "label": "conan create package",
+            "type": "shell",
+            "command": "conan create .",
+            "problemMatcher": [
+                "$msCompile",
+                "$gcc"
+            ],
+            "group": "build"
         }
     ]
 }
