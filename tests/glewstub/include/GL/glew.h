@@ -25,19 +25,24 @@ class GlewStub {
 public:
     static auto reset() -> void;
 
-    static auto glew_init_return_value(unsigned int value) -> void;
+    static auto glew_init_return_value(GLenum value) -> void;
 
-    static auto gl_create_shader_return_value(unsigned int value) -> void;
-    static auto gl_create_shader_call_arg() -> unsigned int;
+    static auto gl_create_shader_return_value(GLuint value) -> void;
+    static auto gl_create_shader_call_arg() -> GLenum;
 
-    static auto gl_get_shader_iv_set_success(bool) -> void;
+    static auto gl_get_shader_iv_set_success(bool success) -> void;
 
 public:
     static auto gl_create_shader_call_count() -> int;
     static auto gl_delete_shader_call_count() -> int;
 
 private:
-    static unsigned int glew_init_return_value_;
+    static GLenum glew_init_return_value_;
+    static GLuint gl_create_shader_return_value_;
+    static GLenum gl_create_shader_call_arg_;
+    static int gl_create_shader_call_count_;
+    static int gl_delete_shader_call_count_;
+    static bool gl_get_shader_iv_set_success_;
 
     friend auto ::glewInit() -> GLenum;
     friend auto ::glCreateShader(GLenum shaderType) -> GLuint;
