@@ -66,6 +66,8 @@ auto Application::setup() -> void
 
     game_->setup();
     renderer_->setup(game_);
+
+    window_->subscribe(std::static_pointer_cast<input::KeyboardInputSubscriber>(game_));
 }
 
 auto Application::run() -> int

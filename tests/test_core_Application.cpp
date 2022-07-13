@@ -122,6 +122,7 @@ TEST_F(gamedevkit_application, successfully_runs_two_game_loops_and_returns_exit
     EXPECT_EQ(expected_game_loops_count, glfwcxx::WindowStub::swap_buffers_call_count());
 }
 
+// TODO: can be parametrized test
 TEST_F(gamedevkit_application, successfully_passes_pressed_alt_escape_keys_to_game)
 {
     const auto actual_key = glfwcxx::input::KeyboardKey::key_escape;
