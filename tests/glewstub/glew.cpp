@@ -26,25 +26,28 @@ extern auto glGetShaderiv(GLuint /*shader*/, GLenum /*pname*/, GLint* params) ->
     *params = gamedevkit::GlewStub::gl_get_shader_iv_set_success_ ? 1 : 0;
 }
 
-extern auto glGetShaderInfoLog(GLuint /*shader*/, GLsizei /*maxLength*/, GLsizei* /*length*/, GLchar* /*infoLog*/) -> void {}
+extern auto glGetShaderInfoLog(GLuint /*shader*/, GLsizei /*maxLength*/, GLsizei* /*length*/, GLchar* infoLog) -> void
+{
+    *infoLog = '\0';
+}
 
 namespace gamedevkit {
 
 GLenum GlewStub::glew_init_return_value_ = GLEW_OK;
-GLuint GlewStub::gl_create_shader_return_value_ = 0u;
+GLuint GlewStub::gl_create_shader_return_value_ = 1u;
 GLenum GlewStub::gl_create_shader_call_arg_ = 0u;
 int GlewStub::gl_create_shader_call_count_ = 0;
 int GlewStub::gl_delete_shader_call_count_ = 0;
-bool GlewStub::gl_get_shader_iv_set_success_ = false;
+bool GlewStub::gl_get_shader_iv_set_success_ = true;
 
 auto GlewStub::reset() -> void
 {
     glew_init_return_value_ = GLEW_OK;
-    gl_create_shader_return_value_ = 0u;
+    gl_create_shader_return_value_ = 1u;
     gl_create_shader_call_arg_ = 0u;
     gl_create_shader_call_count_ = 0;
     gl_delete_shader_call_count_ = 0;
-    gl_get_shader_iv_set_success_ = false;
+    gl_get_shader_iv_set_success_ = true;
 }
 
 auto GlewStub::glew_init_return_value(GLenum value) -> void

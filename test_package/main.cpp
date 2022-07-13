@@ -5,6 +5,7 @@
 #include <GDK/Application.hpp>
 #include <GDK/Keyboard.hpp>
 #include <GDK/WindowBuilder.hpp>
+#include <GDK/GenericShader.hpp>
 
 namespace keyboard = gamedevkit::input::keyboard;
 
@@ -17,6 +18,15 @@ class Game final : public gamedevkit::AbstractGame {
 class Renderer final : public gamedevkit::AbstractRenderer {
     auto setup(std::shared_ptr<gamedevkit::AbstractGame> /*game*/) -> void override {}
     auto render() -> void override {}
+};
+
+class Shader final : public gamedevkit::shaders::GenericShader {
+    explicit Shader()
+        : gamedevkit::shaders::GenericShader{gamedevkit::shaders::Type::vertex}
+    {
+    }
+
+    auto shader_source() const -> std::string override { return ""; }
 };
 
 auto main() -> int
