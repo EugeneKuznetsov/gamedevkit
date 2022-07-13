@@ -1,7 +1,21 @@
 #pragma once
 
-namespace gamedevkit {
+namespace gamedevkit::shaders {
 
-class GenericShader {};
+enum class Type { vertex, fragment };
 
-}  // namespace gamedevkit
+class GenericShader {
+    GenericShader(const GenericShader&) = delete;
+    GenericShader(GenericShader&&) = delete;
+    GenericShader& operator=(const GenericShader&) = delete;
+    GenericShader& operator=(GenericShader&&) = delete;
+
+public:
+    explicit GenericShader(const Type& type);
+    virtual ~GenericShader();
+
+public:
+    auto compile() -> void;
+};
+
+}  // namespace gamedevkit::shaders
