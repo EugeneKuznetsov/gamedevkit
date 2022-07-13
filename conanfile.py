@@ -44,6 +44,7 @@ class GameDevKit(ConanFile):
     def package_info(self):
         self.cpp_info.names["cmake_find_package"] = "GameDevKit"
         self.add_component(name="Core", libs=["core"], requires=["glfwcxx::glfwcxx", "glew::glew"])
+        self.add_component(name="Shaders", libs=["shaders"], requires=["glew::glew"])
         self.clear_external_dependency_include_paths("glfwcxx")
         self.clear_external_dependency_include_paths("glew")
 

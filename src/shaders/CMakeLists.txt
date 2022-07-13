@@ -1,0 +1,14 @@
+set(TARGET_NAME shaders)
+set(SOURCES GenericShader.cpp)
+set(DEPENDENCIES GLEW::GLEW)
+
+add_gdk_target(
+    NAME
+    ${TARGET_NAME}
+    SOURCES
+    ${SOURCES}
+    PRIVATE_DEPENDENCIES
+    ${DEPENDENCIES}
+    PRIVATE_COMPILE_DEFINITIONS
+    "GLEW_STATIC")
+install_gdk_target(TARGET_NAME ${TARGET_NAME})
