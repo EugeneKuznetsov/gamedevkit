@@ -1,8 +1,10 @@
 #pragma once
 
+#include <GDK/KeyboardInputSubscriber.hpp>
+
 namespace gamedevkit {
 
-class AbstractGame {
+class AbstractGame : public input::KeyboardInputSubscriber {
 public:
     virtual ~AbstractGame() = default;
 

@@ -11,6 +11,10 @@ namespace gamedevkit {
 
 class Application;
 
+namespace input {
+class KeyboardInputSubscriber;
+}
+
 struct WindowResolution {
     int width;
     int height;
@@ -31,6 +35,9 @@ private:
     auto activate() -> void;
     auto poll_events() -> void;
     auto swap_buffers() -> void;
+
+private:
+    auto subscribe(std::weak_ptr<input::KeyboardInputSubscriber> subscriber_ptr) -> void;
 
 private:
     auto should_close() const -> bool;
