@@ -54,6 +54,12 @@ TEST_F(gamedevkit_generic_program, successfully_creates_and_destroys_program)
     EXPECT_EQ(gamedevkit::GlewStub::gl_delete_program_call_count(), 1);
 }
 
+TEST_F(gamedevkit_generic_program, fails_creating_program_when_any_error_occurs)
+{
+    gamedevkit::GlewStub::gl_create_program_return_value(0u);
+    EXPECT_THROW(AnyProgram{}, std::runtime_error);
+}
+
 TEST_F(gamedevkit_generic_program, fails_building_program_when_vertex_shader_is_nullptr)
 {
     EXPECT_THROW(InvalidVertexProgram{}.build(), std::runtime_error);
@@ -64,7 +70,13 @@ TEST_F(gamedevkit_generic_program, fails_building_program_when_fragment_shader_i
     EXPECT_THROW(InvalidFragmentProgram{}.build(), std::runtime_error);
 }
 
-TEST_F(gamedevkit_generic_program, fails_building_program_when_any_error_occurs)
+TEST_F(gamedevkit_generic_program, fails_building_program_when_any_program_link_error_occurs)
+{
+    gamedevkit::GlewStub::gl_get_program_iv_set_success(false);
+    EXPECT_THROW(AnyProgram{}.build(), std::runtime_error);
+}
+
+TEST_F(gamedevkit_generic_program, fails_building_program_when_any_shader_compile_error_occurs)
 {
     gamedevkit::GlewStub::gl_get_shader_iv_set_success(false);
     EXPECT_THROW(AnyProgram{}.build(), std::runtime_error);

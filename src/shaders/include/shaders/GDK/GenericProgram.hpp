@@ -33,6 +33,7 @@ private:
 
 private:
     unsigned int object_id_;
+    bool was_built_already_;
 };
 
 }  // namespace gamedevkit::shaders
