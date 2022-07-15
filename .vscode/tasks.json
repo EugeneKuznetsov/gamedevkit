@@ -15,7 +15,7 @@
         {
             "label": "setup conan remote",
             "type": "shell",
-            "command": "conan remote add gamedev-center https://eugenekuznetsov.jfrog.io/artifactory/api/conan/gamedev-conan-local true",
+            "command": "conan remote add gamedev-center https://eugenekuznetsov.jfrog.io/artifactory/api/conan/gamedev-conan-local true --insert 0",
             "problemMatcher": [],
             "group": "none"
         },

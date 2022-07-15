@@ -5,6 +5,8 @@
 #include <GDK/Application.hpp>
 #include <GDK/Keyboard.hpp>
 #include <GDK/WindowBuilder.hpp>
+#include <GDK/GenericShader.hpp>
+#include <GDK/GenericProgram.hpp>
 
 namespace keyboard = gamedevkit::input::keyboard;
 
@@ -17,6 +19,28 @@ class Game final : public gamedevkit::AbstractGame {
 class Renderer final : public gamedevkit::AbstractRenderer {
     auto setup(std::shared_ptr<gamedevkit::AbstractGame> /*game*/) -> void override {}
     auto render() -> void override {}
+};
+
+class Shader final : public gamedevkit::shaders::GenericShader {
+public:
+    explicit Shader(gamedevkit::shaders::Type type = gamedevkit::shaders::Type::vertex)
+        : gamedevkit::shaders::GenericShader{type}
+    {
+    }
+
+    auto shader_source() const -> std::string override { return ""; }
+};
+
+class Program final : public gamedevkit::shaders::GenericProgram {
+    auto vertex_shader() const -> std::unique_ptr<gamedevkit::shaders::GenericShader> override
+    {
+        return std::make_unique<Shader>(gamedevkit::shaders::Type::vertex);
+    }
+
+    auto fragment_shader() const -> std::unique_ptr<gamedevkit::shaders::GenericShader> override
+    {
+        return std::make_unique<Shader>(gamedevkit::shaders::Type::fragment);
+    }
 };
 
 auto main() -> int
