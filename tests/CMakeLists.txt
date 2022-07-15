@@ -24,3 +24,6 @@ add_test_suite(
 
 add_test_suite(NAME test_shaders_GenericShader TARGET_UNDER_TEST shaders
                TARGET_UNDER_TEST_STUB_LIBS glewstub)
+
+add_test_suite(NAME test_shaders_GenericProgram TARGET_UNDER_TEST shaders
+               TARGET_UNDER_TEST_STUB_LIBS glewstub)

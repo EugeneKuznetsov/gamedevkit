@@ -35,6 +35,8 @@ public:
 public:
     static auto gl_create_shader_call_count() -> int;
     static auto gl_delete_shader_call_count() -> int;
+    static auto gl_create_program_call_count() -> int;
+    static auto gl_delete_program_call_count() -> int;
 
 private:
     static GLenum glew_init_return_value_;

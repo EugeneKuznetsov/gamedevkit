@@ -1,5 +1,5 @@
 set(TARGET_NAME shaders)
-set(SOURCES GenericShader.cpp ShadersHelper.cpp)
+set(SOURCES GenericShader.cpp GenericProgram.cpp ShadersHelper.cpp)
 set(DEPENDENCIES GLEW::GLEW)
 
 add_gdk_target(

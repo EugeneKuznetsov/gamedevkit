@@ -80,4 +80,14 @@ auto GlewStub::gl_delete_shader_call_count() -> int
     return gl_delete_shader_call_count_;
 }
 
+auto GlewStub::gl_create_program_call_count() -> int
+{
+    return 0;
+}
+
+auto GlewStub::gl_delete_program_call_count() -> int
+{
+    return 0;
+}
+
 }  // namespace gamedevkit
