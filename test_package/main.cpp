@@ -10,10 +10,7 @@
 #include <GDK/WindowBuilder.hpp>
 #include <GDK/GenericShader.hpp>
 #include <GDK/GenericProgram.hpp>
-#ifdef _WIN32
-#include <windows.h>
-#endif
-#include <GL/gl.h>
+#include <GDK/GraphicsLibrary.hpp>
 
 namespace keyboard = gamedevkit::input::keyboard;
 
