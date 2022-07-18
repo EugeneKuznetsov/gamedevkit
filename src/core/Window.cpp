@@ -29,6 +29,11 @@ auto Window::swap_buffers() -> void
     window_->swap_buffers();
 }
 
+auto Window::close() -> void
+{
+    window_->close();
+}
+
 auto Window::subscribe(std::weak_ptr<input::KeyboardInputSubscriber> subscriber_ptr) -> void
 {
     window_->keyboard_input([subscriber_ptr](auto key, auto action, auto modifiers) -> void {

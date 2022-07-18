@@ -28,7 +28,10 @@ Application::Application(int /*argc*/, char** /*argv[]*/)
 {
 }
 
-Application::~Application() = default;
+Application::~Application()
+{
+    window_ = nullptr;
+}
 
 auto Application::window(std::unique_ptr<Window> window) -> Application&
 {
@@ -61,6 +64,10 @@ auto Application::setup() -> void
     renderer_->setup(game_);
 
     window_->subscribe(std::static_pointer_cast<input::KeyboardInputSubscriber>(game_));
+    game_->on_quit([&window = window_]() {
+        if (nullptr != window)
+            window->close();
+    });
 }
 
 auto Application::run() -> int

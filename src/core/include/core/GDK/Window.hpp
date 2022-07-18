@@ -35,6 +35,7 @@ private:
     auto activate() -> void;
     auto poll_events() -> void;
     auto swap_buffers() -> void;
+    auto close() -> void;
 
 private:
     auto subscribe(std::weak_ptr<input::KeyboardInputSubscriber> subscriber_ptr) -> void;
