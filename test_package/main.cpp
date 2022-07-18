@@ -1,5 +1,6 @@
 #include <cstdlib>
 
+#include <GL/gl.h>
 #include <GDK/AbstractGame.hpp>
 #include <GDK/AbstractRenderer.hpp>
 #include <GDK/Application.hpp>

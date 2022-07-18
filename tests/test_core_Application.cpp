@@ -93,6 +93,11 @@ TEST_F(gamedevkit_application, throws_runtime_error_when_window_making_context_c
     ASSERT_THROW(application_->setup(), std::runtime_error);
 }
 
+TEST_F(gamedevkit_application, throws_runtime_error_when_trying_to_run_application_without_setup)
+{
+    ASSERT_THROW(application_->run(), std::runtime_error);
+}
+
 TEST_F(gamedevkit_application, successfully_configures_window_and_game_and_renderer_when_setup_invoked)
 {
     EXPECT_CALL(*game_, setup).Times(testing::Exactly(1));
