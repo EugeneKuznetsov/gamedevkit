@@ -50,14 +50,7 @@ auto Application::renderer(std::unique_ptr<AbstractRenderer> renderer) -> Applic
 
 auto Application::setup() -> void
 {
-    if (nullptr == window_)
-        throw std::runtime_error("Cannot setup Application without Window being set");
-
-    if (nullptr == game_)
-        throw std::runtime_error("Cannot setup Application without Game being set");
-
-    if (nullptr == renderer_)
-        throw std::runtime_error("Cannot setup Application without Renderer being set");
+    check_application_readiness("setup");
 
     window_->activate();
 
@@ -72,6 +65,8 @@ auto Application::setup() -> void
 
 auto Application::run() -> int
 {
+    check_application_readiness("run");
+
     constexpr auto frames_per_second = 60;
     constexpr auto ms_per_update = std::chrono::milliseconds{1000} / frames_per_second;
 
@@ -95,6 +90,18 @@ auto Application::run() -> int
     }
 
     return EXIT_SUCCESS;
+}
+
+auto Application::check_application_readiness(const std::string& stage) -> void
+{
+    if (nullptr == window_)
+        throw std::runtime_error("Cannot " + stage + " Application without Window being set");
+
+    if (nullptr == game_)
+        throw std::runtime_error("Cannot " + stage + " Application without Game being set");
+
+    if (nullptr == renderer_)
+        throw std::runtime_error("Cannot " + stage + " Application without Renderer being set");
 }
 
 Application::Details::Details()

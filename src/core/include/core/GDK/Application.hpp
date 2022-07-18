@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 
 namespace gamedevkit {
 
@@ -27,6 +28,9 @@ public:
 public:
     auto setup() -> void;
     auto run() -> int;
+
+private:
+    auto check_application_readiness(const std::string& stage) -> void;
 
 private:
     class Details;
