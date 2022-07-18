@@ -15,11 +15,6 @@ namespace input {
 class KeyboardInputSubscriber;
 }
 
-struct WindowResolution {
-    int width;
-    int height;
-};
-
 class Window final {
     Window(const Window&) = delete;
     Window(Window&&) = delete;

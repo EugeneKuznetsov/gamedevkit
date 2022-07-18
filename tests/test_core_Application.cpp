@@ -15,6 +15,7 @@
 #include <GDK/WindowBuilder.hpp>
 
 namespace keyboard = gamedevkit::input::keyboard;
+namespace windows = gamedevkit::windows;
 
 class MockedGame : public gamedevkit::AbstractGame {
 public:
@@ -36,6 +37,10 @@ class MockedRenderer : public gamedevkit::AbstractRenderer {
 public:
     MOCK_METHOD(void, setup, (std::shared_ptr<gamedevkit::AbstractGame>), (override));
     MOCK_METHOD(void, render, (), (override));
+
+    MOCK_METHOD(void, window_size, (const windows::WindowSize& new_window_size), (override));
+    MOCK_METHOD(void, frame_buffer_size, (const windows::FrameBufferSize& new_frame_buffer_size), (override));
+    MOCK_METHOD(void, window_content_scale, (const windows::WindowContentScale& new_window_content_scale), (override));
 };
 
 class gamedevkit_application : public testing::Test {
@@ -175,4 +180,79 @@ TEST_F(gamedevkit_application, successfully_closes_window_on_game_exit_callback_
 
     EXPECT_EQ(EXIT_SUCCESS, application_->run());
     EXPECT_EQ(glfwcxx::WindowStub::poll_events_call_count(), expected_game_loops_count);
+}
+
+TEST_F(gamedevkit_application, successfully_passes_window_size_property_to_renderer_during_setup)
+{
+    const int actual_width{10};
+    const int actual_height{10};
+    const auto expected_size = gamedevkit::windows::WindowSize{10, 10};
+
+    EXPECT_CALL(*renderer_, window_size(testing::Eq(expected_size))).Times(testing::Exactly(1));
+
+    glfwcxx::WindowStub::set_window_size(actual_width, actual_height);
+    application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_)).setup();
+}
+
+TEST_F(gamedevkit_application, successfully_passes_window_size_property_to_renderer_after_setup)
+{
+    const int actual_width{15};
+    const int actual_height{15};
+    const auto expected_size = gamedevkit::windows::WindowSize{15, 15};
+
+    EXPECT_CALL(*renderer_, window_size(testing::Eq(expected_size))).Times(testing::Exactly(2));
+
+    glfwcxx::WindowStub::set_window_size(actual_width, actual_height);
+    application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_)).setup();
+    glfwcxx::WindowStub::notify_window_size();
+}
+
+TEST_F(gamedevkit_application, successfully_passes_frame_buffer_size_property_to_renderer_during_setup)
+{
+    const int actual_width{20};
+    const int actual_height{20};
+    const auto expected_size = gamedevkit::windows::FrameBufferSize{20, 20};
+
+    EXPECT_CALL(*renderer_, frame_buffer_size(testing::Eq(expected_size))).Times(testing::Exactly(1));
+
+    glfwcxx::WindowStub::set_frame_buffer_size(actual_width, actual_height);
+    application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_)).setup();
+}
+
+TEST_F(gamedevkit_application, successfully_passes_frame_buffer_size_property_to_renderer_after_setup)
+{
+    const int actual_width{25};
+    const int actual_height{25};
+    const auto expected_size = gamedevkit::windows::FrameBufferSize{25, 25};
+
+    EXPECT_CALL(*renderer_, frame_buffer_size(testing::Eq(expected_size))).Times(testing::Exactly(2));
+
+    glfwcxx::WindowStub::set_frame_buffer_size(actual_width, actual_height);
+    application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_)).setup();
+    glfwcxx::WindowStub::notify_frame_buffer_size();
+}
+
+TEST_F(gamedevkit_application, successfully_passes_window_content_scale_property_to_renderer_during_setup)
+{
+    const float actual_xscale{30.0f};
+    const float actual_yscale{30.0f};
+    const auto expected_scale = gamedevkit::windows::WindowContentScale{30.0f, 30.0f};
+
+    EXPECT_CALL(*renderer_, window_content_scale(testing::Eq(expected_scale))).Times(testing::Exactly(1));
+
+    glfwcxx::WindowStub::set_window_content_scale(actual_xscale, actual_yscale);
+    application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_)).setup();
+}
+
+TEST_F(gamedevkit_application, successfully_passes_window_content_scale_property_to_renderer_after_setup)
+{
+    const float actual_xscale{30.5f};
+    const float actual_yscale{30.5f};
+    const auto expected_scale = gamedevkit::windows::WindowContentScale{30.5f, 30.5f};
+
+    EXPECT_CALL(*renderer_, window_content_scale(testing::Eq(expected_scale))).Times(testing::Exactly(2));
+
+    glfwcxx::WindowStub::set_window_content_scale(actual_xscale, actual_yscale);
+    application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_)).setup();
+    glfwcxx::WindowStub::notify_window_content_scale();
 }
