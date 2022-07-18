@@ -77,6 +77,11 @@ TEST_F(gamedevkit_application, throws_runtime_error_when_renderer_was_not_set_be
     ASSERT_THROW(application_->window(std::move(window_)).game(game_).setup(), std::runtime_error);
 }
 
+TEST_F(gamedevkit_application, throws_runtime_error_when_trying_to_run_application_without_window_and_game_and_renderer_setup)
+{
+    ASSERT_THROW(application_->run(), std::runtime_error);
+}
+
 TEST_F(gamedevkit_application, throws_runtime_error_when_gl_functions_were_not_initialized)
 {
     gamedevkit::GlewStub::glew_init_return_value(GLEW_OK + 1u);
@@ -91,11 +96,6 @@ TEST_F(gamedevkit_application, throws_runtime_error_when_window_making_context_c
     application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_));
 
     ASSERT_THROW(application_->setup(), std::runtime_error);
-}
-
-TEST_F(gamedevkit_application, throws_runtime_error_when_trying_to_run_application_without_setup)
-{
-    ASSERT_THROW(application_->run(), std::runtime_error);
 }
 
 TEST_F(gamedevkit_application, successfully_configures_window_and_game_and_renderer_when_setup_invoked)

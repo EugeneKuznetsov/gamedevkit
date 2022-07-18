@@ -1,6 +1,8 @@
 #include <cstdlib>
+#include <iostream>
+#include <string>
+#include <thread>
 
-#include <GL/gl.h>
 #include <GDK/AbstractGame.hpp>
 #include <GDK/AbstractRenderer.hpp>
 #include <GDK/Application.hpp>
@@ -8,12 +10,20 @@
 #include <GDK/WindowBuilder.hpp>
 #include <GDK/GenericShader.hpp>
 #include <GDK/GenericProgram.hpp>
+#ifdef _WIN32
+#include <windows.h>
+#endif
+#include <GL/gl.h>
 
 namespace keyboard = gamedevkit::input::keyboard;
 
 class Game final : public gamedevkit::AbstractGame {
     auto setup() -> void override {}
-    auto update() -> void override {}
+    auto update() -> void override
+    {
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
     auto input(const keyboard::Key&, const keyboard::Action&, const std::set<keyboard::Modifier>&) -> void override {}
 };
 
@@ -47,9 +57,18 @@ class Program final : public gamedevkit::shaders::GenericProgram {
 auto main() -> int
 {
     try {
-        gamedevkit::Application{}.game(std::make_shared<Game>()).renderer(std::make_unique<Renderer>()).setup();
+        gamedevkit::Application app;
+        auto window = gamedevkit::WindowBuilder{"Package test", {100, 100}}.opengl_profile_core().context_version(4, 0).build();
+        app.window(std::move(window)).game(std::make_shared<Game>()).renderer(std::make_unique<Renderer>()).setup();
+        auto exit_thread = std::thread([]() {
+            std::this_thread::sleep_for(std::chrono::milliseconds{500});
+            std::exit(EXIT_SUCCESS);
+        });
+        return app.run();
     }
-    catch (...) {
+    catch (const std::runtime_error& err) {
+        const std::string error_string{err.what()};
+        std::cerr << error_string << std::endl;
+        return error_string.find("The driver does not appear to support OpenGL") != error_string.npos ? EXIT_SUCCESS : EXIT_FAILURE;
     }
-    return EXIT_SUCCESS;
 }
