@@ -23,6 +23,15 @@ public:
     MOCK_METHOD(void, input, (const keyboard::Key&, const keyboard::Action&, const std::set<keyboard::Modifier>&), (override));
 };
 
+class QuitEventGame : public gamedevkit::AbstractGame {
+public:
+    MOCK_METHOD(void, setup, (), (override));
+    MOCK_METHOD(void, update, (), (override));
+    MOCK_METHOD(void, input, (const keyboard::Key&, const keyboard::Action&, const std::set<keyboard::Modifier>&), (override));
+
+    auto request_quit() -> void { quit(); }
+};
+
 class MockedRenderer : public gamedevkit::AbstractRenderer {
 public:
     MOCK_METHOD(void, setup, (std::shared_ptr<gamedevkit::AbstractGame>), (override));
@@ -147,4 +156,23 @@ TEST_F(gamedevkit_application, successfully_passes_pressed_alt_escape_keys_to_ga
     glfwcxx::WindowStub::keyboard_input(glfwcxx::helpers::glfw_keyboard_key(actual_key),
                                         glfwcxx::helpers::glfw_keyboard_action(actual_action),
                                         {glfwcxx::helpers::glfw_keyboard_modifier(actual_modifier)});
+}
+
+TEST_F(gamedevkit_application, successfully_closes_window_on_game_exit_callback_request)
+{
+    const auto expected_game_loops_count = 0u;
+    const auto maximum_game_loops_count = 2u;
+    auto game_loop_count = 0u;
+    glfwcxx::WindowStub::poll_events_call_callback([&game_loop_count, &maximum_game_loops_count]() -> void {
+        game_loop_count++;
+        if (maximum_game_loops_count == game_loop_count)
+            glfwcxx::WindowStub::close_window();
+    });
+
+    auto quit_game_ = std::make_shared<QuitEventGame>();
+    application_->window(std::move(window_)).game(quit_game_).renderer(std::move(renderer_)).setup();
+    quit_game_->request_quit();
+
+    EXPECT_EQ(EXIT_SUCCESS, application_->run());
+    EXPECT_EQ(glfwcxx::WindowStub::poll_events_call_count(), expected_game_loops_count);
 }

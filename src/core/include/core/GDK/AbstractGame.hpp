@@ -10,6 +10,9 @@ public:
 
     virtual auto setup() -> void = 0;
     virtual auto update() -> void = 0;
+
+protected:
+    auto quit() -> void;
 };
 
 }  // namespace gamedevkit
