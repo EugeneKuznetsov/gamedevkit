@@ -15,10 +15,9 @@ namespace input {
 class KeyboardInputSubscriber;
 }
 
-struct WindowResolution {
-    int width;
-    int height;
-};
+namespace windows {
+class WindowPropertiesSubscriber;
+}
 
 class Window final {
     Window(const Window&) = delete;
@@ -39,6 +38,7 @@ private:
 
 private:
     auto subscribe(std::weak_ptr<input::KeyboardInputSubscriber> subscriber_ptr) -> void;
+    auto subscribe(std::weak_ptr<windows::WindowPropertiesSubscriber> subscriber_ptr, bool trigger_on_subscribe = true) -> void;
 
 private:
     auto should_close() const -> bool;

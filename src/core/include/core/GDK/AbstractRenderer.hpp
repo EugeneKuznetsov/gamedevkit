@@ -2,11 +2,13 @@
 
 #include <memory>
 
+#include <GDK/WindowPropertiesSubscriber.hpp>
+
 namespace gamedevkit {
 
 class AbstractGame;
 
-class AbstractRenderer {
+class AbstractRenderer : public windows::WindowPropertiesSubscriber {
 public:
     virtual ~AbstractRenderer() = default;
 

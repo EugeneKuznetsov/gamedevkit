@@ -4,6 +4,7 @@
 #include <string>
 
 #include <GDK/Window.hpp>
+#include <GDK/WindowProperties.hpp>
 
 namespace glfwcxx {
 class WindowHints;
@@ -19,16 +20,16 @@ class WindowBuilder final {
 
 public:
     explicit WindowBuilder();
-    explicit WindowBuilder(const std::string& title, const WindowResolution& resolution);
+    explicit WindowBuilder(const std::string& title, const windows::WindowSize& resolution);
     ~WindowBuilder();
 
 public:
     [[nodiscard]] auto build() -> std::unique_ptr<Window>;
-    [[nodiscard]] auto build(const std::string& title, const WindowResolution& resolution) -> std::unique_ptr<Window>;
+    [[nodiscard]] auto build(const std::string& title, const windows::WindowSize& resolution) -> std::unique_ptr<Window>;
 
 public:
     [[nodiscard]] auto title(const std::string& title) -> WindowBuilder&;
-    [[nodiscard]] auto resolution(const WindowResolution& resolution) -> WindowBuilder&;
+    [[nodiscard]] auto resolution(const windows::WindowSize& resolution) -> WindowBuilder&;
 
 public:
     [[nodiscard]] auto accum_alpha_bits(int value = 0) -> WindowBuilder&;
@@ -87,7 +88,7 @@ public:
 
 private:
     std::string title_;
-    std::unique_ptr<WindowResolution> resolution_;
+    std::unique_ptr<windows::WindowSize> resolution_;
     std::unique_ptr<glfwcxx::WindowHints> window_hints_;
 };
 
