@@ -15,6 +15,10 @@ namespace input {
 class KeyboardInputSubscriber;
 }
 
+namespace windows {
+class WindowPropertiesSubscriber;
+}
+
 class Window final {
     Window(const Window&) = delete;
     Window(Window&&) = delete;
@@ -34,6 +38,7 @@ private:
 
 private:
     auto subscribe(std::weak_ptr<input::KeyboardInputSubscriber> subscriber_ptr) -> void;
+    auto subscribe(std::weak_ptr<windows::WindowPropertiesSubscriber> subscriber_ptr, bool trigger_on_subscribe = true) -> void;
 
 private:
     auto should_close() const -> bool;

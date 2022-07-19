@@ -56,7 +56,7 @@ auto main() -> int
     try {
         gamedevkit::Application app;
         auto window = gamedevkit::WindowBuilder{"Package test", {100, 100}}.opengl_profile_core().context_version(4, 0).build();
-        app.window(std::move(window)).game(std::make_shared<Game>()).renderer(std::make_unique<Renderer>()).setup();
+        app.window(std::move(window)).game(std::make_shared<Game>()).renderer(std::make_shared<Renderer>()).setup();
         auto exit_thread = std::thread([]() {
             std::this_thread::sleep_for(std::chrono::milliseconds{500});
             std::exit(EXIT_SUCCESS);

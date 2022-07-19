@@ -53,13 +53,13 @@ public:
         application_ = std::make_unique<gamedevkit::Application>();
         window_ = gamedevkit::WindowBuilder{}.build("", {0, 0});
         game_ = std::make_shared<MockedGame>();
-        renderer_ = std::make_unique<MockedRenderer>();
+        renderer_ = std::make_shared<MockedRenderer>();
     }
 
     std::unique_ptr<gamedevkit::Application> application_{nullptr};
     std::unique_ptr<gamedevkit::Window> window_{nullptr};
     std::shared_ptr<MockedGame> game_{nullptr};
-    std::unique_ptr<MockedRenderer> renderer_{nullptr};
+    std::shared_ptr<MockedRenderer> renderer_{nullptr};
 };
 
 TEST_F(gamedevkit_application, throws_runtime_error_on_construction_when_glfwcxx_cannot_be_initialized)
@@ -99,7 +99,7 @@ TEST_F(gamedevkit_application, throws_runtime_error_when_trying_to_run_applicati
 TEST_F(gamedevkit_application, throws_runtime_error_when_gl_functions_were_not_initialized)
 {
     gamedevkit::GlewStub::glew_init_return_value(GLEW_OK + 1u);
-    application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_));
+    application_->window(std::move(window_)).game(game_).renderer(renderer_);
 
     ASSERT_THROW(application_->setup(), std::runtime_error);
 }
@@ -107,7 +107,7 @@ TEST_F(gamedevkit_application, throws_runtime_error_when_gl_functions_were_not_i
 TEST_F(gamedevkit_application, throws_runtime_error_when_window_making_context_current_fails)
 {
     glfwcxx::WindowStub::make_context_current_failure();
-    application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_));
+    application_->window(std::move(window_)).game(game_).renderer(renderer_);
 
     ASSERT_THROW(application_->setup(), std::runtime_error);
 }
@@ -117,7 +117,7 @@ TEST_F(gamedevkit_application, successfully_configures_window_and_game_and_rende
     EXPECT_CALL(*game_, setup).Times(testing::Exactly(1));
     EXPECT_CALL(*renderer_, setup(testing::_)).Times(testing::Exactly(1));
 
-    ASSERT_NO_THROW(application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_)).setup());
+    ASSERT_NO_THROW(application_->window(std::move(window_)).game(game_).renderer(renderer_).setup());
 }
 
 TEST_F(gamedevkit_application, successfully_runs_two_game_loops_and_returns_exit_success_when_window_should_close)
@@ -133,7 +133,7 @@ TEST_F(gamedevkit_application, successfully_runs_two_game_loops_and_returns_exit
     EXPECT_CALL(*game_, update).Times(testing::Exactly(1));
     EXPECT_CALL(*renderer_, render).Times(testing::Exactly(2));
 
-    application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_)).setup();
+    application_->window(std::move(window_)).game(game_).renderer(renderer_).setup();
 
     // TODO: it might stuck, move it to a separate thread of execution with timeout
     EXPECT_EQ(EXIT_SUCCESS, application_->run());
@@ -157,7 +157,7 @@ TEST_F(gamedevkit_application, successfully_passes_pressed_alt_escape_keys_to_ga
     EXPECT_CALL(*game_, input(testing::Eq(expected_key), testing::Eq(expected_action), testing::Truly(modifier_was_set)))
         .Times(testing::Exactly(1));
 
-    application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_)).setup();
+    application_->window(std::move(window_)).game(game_).renderer(renderer_).setup();
     glfwcxx::WindowStub::keyboard_input(glfwcxx::helpers::glfw_keyboard_key(actual_key),
                                         glfwcxx::helpers::glfw_keyboard_action(actual_action),
                                         {glfwcxx::helpers::glfw_keyboard_modifier(actual_modifier)});
@@ -175,7 +175,7 @@ TEST_F(gamedevkit_application, successfully_closes_window_on_game_exit_callback_
     });
 
     auto quit_game_ = std::make_shared<QuitEventGame>();
-    application_->window(std::move(window_)).game(quit_game_).renderer(std::move(renderer_)).setup();
+    application_->window(std::move(window_)).game(quit_game_).renderer(renderer_).setup();
     quit_game_->request_quit();
 
     EXPECT_EQ(EXIT_SUCCESS, application_->run());
@@ -191,7 +191,7 @@ TEST_F(gamedevkit_application, successfully_passes_window_size_property_to_rende
     EXPECT_CALL(*renderer_, window_size(testing::Eq(expected_size))).Times(testing::Exactly(1));
 
     glfwcxx::WindowStub::set_window_size(actual_width, actual_height);
-    application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_)).setup();
+    application_->window(std::move(window_)).game(game_).renderer(renderer_).setup();
 }
 
 TEST_F(gamedevkit_application, successfully_passes_window_size_property_to_renderer_after_setup)
@@ -203,7 +203,7 @@ TEST_F(gamedevkit_application, successfully_passes_window_size_property_to_rende
     EXPECT_CALL(*renderer_, window_size(testing::Eq(expected_size))).Times(testing::Exactly(2));
 
     glfwcxx::WindowStub::set_window_size(actual_width, actual_height);
-    application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_)).setup();
+    application_->window(std::move(window_)).game(game_).renderer(renderer_).setup();
     glfwcxx::WindowStub::notify_window_size();
 }
 
@@ -216,7 +216,7 @@ TEST_F(gamedevkit_application, successfully_passes_frame_buffer_size_property_to
     EXPECT_CALL(*renderer_, frame_buffer_size(testing::Eq(expected_size))).Times(testing::Exactly(1));
 
     glfwcxx::WindowStub::set_frame_buffer_size(actual_width, actual_height);
-    application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_)).setup();
+    application_->window(std::move(window_)).game(game_).renderer(renderer_).setup();
 }
 
 TEST_F(gamedevkit_application, successfully_passes_frame_buffer_size_property_to_renderer_after_setup)
@@ -228,7 +228,7 @@ TEST_F(gamedevkit_application, successfully_passes_frame_buffer_size_property_to
     EXPECT_CALL(*renderer_, frame_buffer_size(testing::Eq(expected_size))).Times(testing::Exactly(2));
 
     glfwcxx::WindowStub::set_frame_buffer_size(actual_width, actual_height);
-    application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_)).setup();
+    application_->window(std::move(window_)).game(game_).renderer(renderer_).setup();
     glfwcxx::WindowStub::notify_frame_buffer_size();
 }
 
@@ -241,7 +241,7 @@ TEST_F(gamedevkit_application, successfully_passes_window_content_scale_property
     EXPECT_CALL(*renderer_, window_content_scale(testing::Eq(expected_scale))).Times(testing::Exactly(1));
 
     glfwcxx::WindowStub::set_window_content_scale(actual_xscale, actual_yscale);
-    application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_)).setup();
+    application_->window(std::move(window_)).game(game_).renderer(renderer_).setup();
 }
 
 TEST_F(gamedevkit_application, successfully_passes_window_content_scale_property_to_renderer_after_setup)
@@ -253,6 +253,6 @@ TEST_F(gamedevkit_application, successfully_passes_window_content_scale_property
     EXPECT_CALL(*renderer_, window_content_scale(testing::Eq(expected_scale))).Times(testing::Exactly(2));
 
     glfwcxx::WindowStub::set_window_content_scale(actual_xscale, actual_yscale);
-    application_->window(std::move(window_)).game(game_).renderer(std::move(renderer_)).setup();
+    application_->window(std::move(window_)).game(game_).renderer(renderer_).setup();
     glfwcxx::WindowStub::notify_window_content_scale();
 }

@@ -23,7 +23,7 @@ public:
 public:
     auto window(std::unique_ptr<Window> window) -> Application&;
     auto game(std::shared_ptr<AbstractGame> game) -> Application&;
-    auto renderer(std::unique_ptr<AbstractRenderer> renderer) -> Application&;
+    auto renderer(std::shared_ptr<AbstractRenderer> renderer) -> Application&;
 
 public:
     auto setup() -> void;
@@ -38,7 +38,7 @@ private:
 
     std::unique_ptr<Window> window_;
     std::shared_ptr<AbstractGame> game_;
-    std::unique_ptr<AbstractRenderer> renderer_;
+    std::shared_ptr<AbstractRenderer> renderer_;
 };
 
 }  // namespace gamedevkit

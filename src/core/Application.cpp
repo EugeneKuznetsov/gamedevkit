@@ -45,7 +45,7 @@ auto Application::game(std::shared_ptr<AbstractGame> game) -> Application&
     return *this;
 }
 
-auto Application::renderer(std::unique_ptr<AbstractRenderer> renderer) -> Application&
+auto Application::renderer(std::shared_ptr<AbstractRenderer> renderer) -> Application&
 {
     renderer_ = std::move(renderer);
     return *this;
@@ -60,14 +60,15 @@ auto Application::setup() -> void
     if (GLEW_OK != glewInit())
         throw std::runtime_error("Failed to initialize GLEW");
 
-    game_->setup();
-    renderer_->setup(game_);
-
     window_->subscribe(std::static_pointer_cast<input::KeyboardInputSubscriber>(game_));
+    window_->subscribe(std::static_pointer_cast<windows::WindowPropertiesSubscriber>(renderer_));
+
+    game_->setup();
     game_->on_quit([&window = window_]() {
         if (nullptr != window)
             window->close();
     });
+    renderer_->setup(game_);
 }
 
 auto Application::run() -> int
