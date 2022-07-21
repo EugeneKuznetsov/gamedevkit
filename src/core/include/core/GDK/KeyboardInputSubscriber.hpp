@@ -16,7 +16,7 @@ public:
 
     virtual auto input(const input::keyboard::Key& key,
                        const input::keyboard::Action& action,
-                       const std::set<input::keyboard::Modifier>& modifiers) -> void = 0;
+                       const std::set<input::keyboard::Modifier>& modifiers) -> void;
 };
 
 }  // namespace gamedevkit::input

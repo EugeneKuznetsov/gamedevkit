@@ -1,6 +1,12 @@
 set(TARGET_NAME core)
-set(SOURCES Application.cpp Window.cpp WindowBuilder.cpp KeyboardHelper.cpp AbstractGame.cpp
-            WindowPropertiesSubscriber.cpp)
+set(SOURCES
+    Application.cpp
+    Window.cpp
+    WindowBuilder.cpp
+    KeyboardHelper.cpp
+    AbstractGame.cpp
+    WindowPropertiesSubscriber.cpp
+    KeyboardInputSubscriber.cpp)
 set(DEPENDENCIES glfwcxx::core glfwcxx::window GLEW::GLEW)
 
 add_gdk_target(
