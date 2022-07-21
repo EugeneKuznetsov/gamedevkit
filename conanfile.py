@@ -46,7 +46,6 @@ class GameDevKit(ConanFile):
         self.add_component(name="Core", libs=["core"], requires=["glfwcxx::glfwcxx", "glew::glew"])
         self.add_component(name="Shaders", libs=["shaders"], requires=["glew::glew"])
         self.clear_external_dependency_include_paths("glfwcxx")
-        self.clear_external_dependency_include_paths("glew")
 
     def add_component(self, name, libs = [], requires = []):
         self.cpp_info.components[name].names["cmake_find_package"] = name
