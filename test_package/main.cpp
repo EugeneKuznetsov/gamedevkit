@@ -9,6 +9,7 @@
 #include <GDK/GenericProgram.hpp>
 #include <GDK/GenericShader.hpp>
 #include <GDK/GraphicsLibrary.hpp>
+#include <GDK/ImageLoader.hpp>
 #include <GDK/Keyboard.hpp>
 #include <GDK/WindowBuilder.hpp>
 #include <GDK/WindowProperties.hpp>
@@ -22,7 +23,7 @@ class Game final : public gamedevkit::AbstractGame {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        unsigned int vao{0u};
+        auto vao{0u};
         glGenVertexArrays(1, &vao);
         glDeleteVertexArrays(1, &vao);
     }

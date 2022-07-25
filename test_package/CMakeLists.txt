@@ -19,4 +19,5 @@ find_package(GameDevKit REQUIRED)
 set(CURRENT_TARGET gamedevkit_app)
 
 add_executable(${CURRENT_TARGET} main.cpp)
-target_link_libraries(${CURRENT_TARGET} PRIVATE GameDevKit::Core GameDevKit::Shaders)
+target_link_libraries(${CURRENT_TARGET} PRIVATE GameDevKit::Core GameDevKit::Shaders
+                                                GameDevKit::Utils)

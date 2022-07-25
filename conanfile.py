@@ -17,7 +17,7 @@ class GameDevKit(ConanFile):
     generators = "cmake_find_package"
     settings = "os", "compiler", "arch", "build_type"
     tool_requires = "cmake/[>3.20.x]", "ninja/[^1.11.x]", "gtest/[~1.11.x]"
-    requires = "glfwcxx/[^1.x]@gamedev/stable", "glew/[^2.2.x]"
+    requires = "glfwcxx/[^1.x]@gamedev/stable", "glew/[^2.2.x]", "pngpp/0.2.10"
 
     def __init__(self, output, runner, display_name="", user=None, channel=None):
         super().__init__(output, runner, display_name=display_name, user=user, channel=channel)
@@ -45,7 +45,9 @@ class GameDevKit(ConanFile):
         self.cpp_info.names["cmake_find_package"] = "GameDevKit"
         self.add_component(name="Core", libs=["core"], requires=["glfwcxx::glfwcxx", "glew::glew"])
         self.add_component(name="Shaders", libs=["shaders"], requires=["glew::glew"])
+        self.add_component(name="Utils", libs=["utils"], requires=["pngpp::pngpp"])
         self.clear_external_dependency_include_paths("glfwcxx")
+        self.clear_external_dependency_include_paths("pngpp")
 
     def add_component(self, name, libs = [], requires = []):
         self.cpp_info.components[name].names["cmake_find_package"] = name

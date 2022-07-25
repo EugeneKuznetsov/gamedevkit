@@ -16,7 +16,8 @@ function(add_test_suite)
     target_link_libraries(
         ${MAIN_TARGET}
         PRIVATE
-            GTest::gtest_main GTest::gmock_main glewstub ${TARGET_UNDER_TEST_API}
+            GTest::gtest_main GTest::gmock_main ${ARG_TARGET_UNDER_TEST_STUB_LIBS}
+            ${TARGET_UNDER_TEST_API}
             $<$<TARGET_EXISTS:${TARGET_UNDER_TEST_DETAILS_API}>:${TARGET_UNDER_TEST_DETAILS_API}>)
     foreach(DEPENDENCY_TARGET IN LISTS ARG_TEST_SUITE_DEPENDENCY_LIBS)
         target_link_libraries(${MAIN_TARGET} PRIVATE ${DEPENDENCY_TARGET})
