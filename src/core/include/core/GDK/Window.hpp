@@ -9,8 +9,6 @@ class Window;
 
 namespace gamedevkit {
 
-class Application;
-
 namespace input {
 class KeyboardInputSubscriber;
 }

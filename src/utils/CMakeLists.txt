@@ -1,5 +1,5 @@
 set(TARGET_NAME utils)
-set(SOURCES ImageLoader.cpp Image.cpp)
+set(SOURCES Image.cpp)
 set(DEPENDENCIES PNG::PNG pngpp::pngpp)
 
 add_gdk_target(NAME ${TARGET_NAME} SOURCES ${SOURCES} PRIVATE_DEPENDENCIES ${DEPENDENCIES})

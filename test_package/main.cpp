@@ -9,7 +9,7 @@
 #include <GDK/GenericProgram.hpp>
 #include <GDK/GenericShader.hpp>
 #include <GDK/GraphicsLibrary.hpp>
-#include <GDK/ImageLoader.hpp>
+#include <GDK/Image.hpp>
 #include <GDK/Keyboard.hpp>
 #include <GDK/WindowBuilder.hpp>
 #include <GDK/WindowProperties.hpp>
