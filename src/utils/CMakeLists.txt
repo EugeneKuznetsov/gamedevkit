@@ -1,0 +1,6 @@
+set(TARGET_NAME utils)
+set(SOURCES Image.cpp)
+set(DEPENDENCIES PNG::PNG pngpp::pngpp)
+
+add_gdk_target(NAME ${TARGET_NAME} SOURCES ${SOURCES} PRIVATE_DEPENDENCIES ${DEPENDENCIES})
+install_gdk_target(TARGET_NAME ${TARGET_NAME})
