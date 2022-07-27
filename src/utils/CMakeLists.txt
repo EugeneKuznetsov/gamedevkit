@@ -1,6 +1,7 @@
 set(TARGET_NAME utils)
-set(SOURCES Image.cpp)
-set(DEPENDENCIES PNG::PNG pngpp::pngpp)
+set(TARGET_SOURCES Image.cpp)
+set(TARGET_DEPENDENCIES "PRIVATE PNG::PNG" "PRIVATE pngpp::pngpp")
 
-add_gdk_target(NAME ${TARGET_NAME} SOURCES ${SOURCES} PRIVATE_DEPENDENCIES ${DEPENDENCIES})
-install_gdk_target(TARGET_NAME ${TARGET_NAME})
+add_gdk_target(${TARGET_NAME} TARGET_SOURCES ${TARGET_SOURCES} TARGET_DEPENDENCIES
+               ${TARGET_DEPENDENCIES})
+install_gdk_target(${TARGET_NAME})

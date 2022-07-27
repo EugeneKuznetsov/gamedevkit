@@ -5,16 +5,22 @@
             "Specify structure for custom cmake functions"
         ],
         "additional_commands": {
-            "foo": {
-                "flags": [
-                    "BAR",
-                    "BAZ"
-                ],
+            "add_gdk_target": {
                 "kwargs": {
-                    "HEADERS": "*",
-                    "SOURCES": "*",
-                    "DEPENDS": "*"
-                }
+                    "GDK_TARGET_SOURCES": "*",
+                    "GDK_TARGET_DEPENDENCIES": "*"
+                },
+                "pargs": "*"
+            },
+            "install_gdk_target": {
+                "pargs": "*"
+            },
+            "add_test_suite": {
+                "kwargs": {
+                    "TARGET_UNDER_TEST": "*",
+                    "TEST_SUITE_DEPENDENCIES": "*"
+                },
+                "pargs": "*"
             }
         },
         "_help_override_spec": [
