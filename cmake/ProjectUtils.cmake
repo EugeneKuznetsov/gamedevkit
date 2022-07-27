@@ -1,64 +1,44 @@
-function(add_gdk_target)
-    set(options WITH_DETAILS)
-    set(oneValueArgs NAME)
-    set(multiValueArgs SOURCES PRIVATE_DEPENDENCIES PRIVATE_COMPILE_DEFINITIONS)
-    cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+function(add_gdk_target GDK_TARGET_NAME)
+    set(options)
+    set(oneValueArgs)
+    set(multiValueArgs TARGET_SOURCES TARGET_DEPENDENCIES)
+    cmake_parse_arguments(GDK "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-    set(MAIN_TARGET ${ARG_NAME})
-    set(API_TARGET ${MAIN_TARGET}-api)
-    set(DETAILS_API_TARGET ${MAIN_TARGET}-details-api)
-    set(OBJECT_TARGET ${MAIN_TARGET}-object)
-
-    add_library(${API_TARGET} INTERFACE)
-    target_include_directories(
-        ${API_TARGET} INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include/${ARG_NAME}>)
-
-    if(DEFINED ARG_WITH_DETAILS)
-        add_library(${DETAILS_API_TARGET} INTERFACE)
-        target_include_directories(
-            ${DETAILS_API_TARGET}
-            INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include/details>)
+    if(NOT GDK_TARGET_SOURCES)
+        message(FATAL_ERROR "Source files were not provided for ${GDK_TARGET_NAME} target")
     endif()
 
-    add_library(${OBJECT_TARGET} OBJECT ${ARG_SOURCES})
-    target_sources(${OBJECT_TARGET} INTERFACE ${ARG_SOURCES})
-    target_compile_definitions(${OBJECT_TARGET} PRIVATE ${ARG_PRIVATE_COMPILE_DEFINITIONS})
-    target_link_libraries(
-        ${OBJECT_TARGET}
-        PRIVATE $<BUILD_INTERFACE:${API_TARGET}>
-                $<$<TARGET_EXISTS:${DETAILS_API_TARGET}>:$<BUILD_INTERFACE:${DETAILS_API_TARGET}>>)
-    foreach(DEPENDENCY_TARGET IN LISTS ARG_PRIVATE_DEPENDENCIES)
-        if(NOT TARGET ${DEPENDENCY_TARGET})
-            message(FATAL_ERROR "${DEPENDENCY_TARGET} is not a real target")
+    add_library(${GDK_TARGET_NAME} STATIC ${GDK_TARGET_SOURCES})
+    target_sources(${GDK_TARGET_NAME} INTERFACE ${GDK_TARGET_SOURCES})
+    target_include_directories(
+        ${GDK_TARGET_NAME}
+        PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include/${GDK_TARGET_NAME}>)
+
+    if("GLEW::GLEW" IN_LIST TARGET_DEPENDENCIES)
+        target_compile_definitions(${GDK_TARGET_NAME} PRIVATE "GLEW_STATIC")
+    endif()
+
+    if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/include/details)
+        target_include_directories(
+            ${GDK_TARGET_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include/details>)
+    endif()
+
+    foreach(DEPENDENCY_TARGET IN LISTS GDK_TARGET_DEPENDENCIES)
+        string(REGEX MATCH "^(PRIVATE|PUBLIC|INTERFACE) (.*)" _ ${DEPENDENCY_TARGET})
+        if(NOT TARGET ${CMAKE_MATCH_2})
+            message(FATAL_ERROR "${CMAKE_MATCH_2} is not a target")
         endif()
-        get_target_property(DEPENDENCY_HEADERS ${DEPENDENCY_TARGET} INTERFACE_INCLUDE_DIRECTORIES)
-        target_include_directories(${OBJECT_TARGET}
-                                   PRIVATE $<BUILD_INTERFACE:${DEPENDENCY_HEADERS}>)
+        target_link_libraries(${GDK_TARGET_NAME} ${CMAKE_MATCH_1} ${CMAKE_MATCH_2})
     endforeach()
 
-    add_library(${MAIN_TARGET} STATIC $<TARGET_OBJECTS:${OBJECT_TARGET}>)
-    target_link_libraries(
-        ${MAIN_TARGET}
-        PUBLIC $<BUILD_INTERFACE:${API_TARGET}>
-        PRIVATE $<$<TARGET_EXISTS:${DETAILS_API_TARGET}>:$<BUILD_INTERFACE:${DETAILS_API_TARGET}>>)
-    foreach(DEPENDENCY_TARGET IN LISTS ARG_PRIVATE_LIBS)
-        target_link_libraries(${MAIN_TARGET} PRIVATE $<BUILD_INTERFACE:${DEPENDENCY_TARGET}>)
-    endforeach()
-
-    add_library(GameDevKit::${MAIN_TARGET} ALIAS ${MAIN_TARGET})
+    add_library(GameDevKit::${GDK_TARGET_NAME} ALIAS ${GDK_TARGET_NAME})
 endfunction()
 
-function(install_gdk_target)
-    set(options)
-    set(oneValueArgs TARGET_NAME)
-    set(multiValueArgs)
-    cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-    set(GDK_TARGET ${ARG_TARGET_NAME})
+function(install_gdk_target GDK_TARGET_NAME)
     install(
-        TARGETS ${GDK_TARGET}
+        TARGETS ${GDK_TARGET_NAME}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
-    install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/include/${GDK_TARGET}/GDK
+    install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/include/${GDK_TARGET_NAME}/GDK
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 endfunction()
