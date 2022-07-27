@@ -19,6 +19,7 @@ jobs:
     env:
       DISPLAY: ":99"
       CONAN_REVISIONS_ENABLED: "1"
+      CONAN_SYSREQUIRES_MODE: "enabled"
     steps:
       - uses: actions/checkout@v2
 
@@ -35,7 +36,7 @@ jobs:
 
       - name: Install package dependencies
         run: |
-          sudo sudo apt-get install -y --no-install-recommends libopengl-dev libopengl-dev
+          sudo sudo apt-get install -y --no-install-recommends libopengl-dev
 
       - name: Create package
         run: |
