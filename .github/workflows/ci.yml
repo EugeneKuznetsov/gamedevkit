@@ -9,6 +9,8 @@ jobs:
   linux:
     name: ${{ matrix.os }} / ${{ matrix.build_type }} / ${{ matrix.compiler.name }}
     runs-on: ubuntu-22.04
+    env:
+      CONAN_SYSREQUIRES_MODE: "enabled"
     strategy:
       fail-fast: false
       matrix:
@@ -21,24 +23,21 @@ jobs:
 
       - name: Setup environment
         run: |
-          sudo apt-get install -y --no-install-recommends libx11-dev libx11-xcb-dev libfontenc-dev libice-dev libsm-dev libxau-dev \
-            libxaw7-dev libxcomposite-dev libxcursor-dev libxdamage-dev libxdmcp-dev libxext-dev libxfixes-dev libxi-dev libxinerama-dev \
-            libxkbfile-dev libxmu-dev libxmuu-dev libxpm-dev libxrandr-dev libxrender-dev libxres-dev libxss-dev libxt-dev libxtst-dev \
-            libxv-dev libxvmc-dev libxxf86vm-dev xtrans-dev libxcb-render0-dev libxcb-render-util0-dev libxcb-xkb-dev libxcb-icccm4-dev \
-            libxcb-image0-dev libxcb-keysyms1-dev libxcb-randr0-dev libxcb-shape0-dev libxcb-sync-dev libxcb-xfixes0-dev libxcb-xinerama0-dev \
-            xkb-data libxcb-dri3-dev uuid-dev libxcb-util-dev libgl-dev libglx-dev libglu1-mesa-dev libopengl-dev
           pip3 install conan
-          conan --version
-          conan profile new default --detect
+          conan config init
           conan profile update settings.build_type=${{ matrix.build_type }} default
           conan profile update settings.compiler=${{ matrix.compiler.compiler }} default
           conan profile update settings.compiler.version=${{ matrix.compiler.version }} default
           conan profile update settings.compiler.libcxx=libstdc++11 default
           conan remote add gamedev-center https://eugenekuznetsov.jfrog.io/artifactory/api/conan/gamedev-conan-local --insert 0
 
+      - name: Install package dependencies
+        run: |
+          sudo apt-get install -y --no-install-recommends libopengl-dev
+          conan install . --install-folder=build --conf tools.system.package_manager:mode=install --conf tools.system.package_manager:sudo=True
+
       - name: Build
         run: |
-          conan install . --install-folder=build
           conan build . --build-folder=build --configure --build
 
       - name: Test
@@ -61,8 +60,7 @@ jobs:
       - name: Setup environment
         run: |
           pip install conan
-          conan --version
-          conan profile new default --detect
+          conan config init
           conan profile update settings.build_type=${{ matrix.build_type }} default
           conan profile update settings.compiler='${{ matrix.compiler.compiler }}' default
           conan profile update settings.compiler.version=${{ matrix.compiler.version }} default
@@ -82,20 +80,14 @@ jobs:
     runs-on: ubuntu-22.04
     env:
       DISPLAY: ":99"
+      CONAN_SYSREQUIRES_MODE: "enabled"
     steps:
       - uses: actions/checkout@v2
 
       - name: Setup environment
         run: |
-          sudo apt-get install -y --no-install-recommends libx11-dev libx11-xcb-dev libfontenc-dev libice-dev libsm-dev libxau-dev \
-            libxaw7-dev libxcomposite-dev libxcursor-dev libxdamage-dev libxdmcp-dev libxext-dev libxfixes-dev libxi-dev libxinerama-dev \
-            libxkbfile-dev libxmu-dev libxmuu-dev libxpm-dev libxrandr-dev libxrender-dev libxres-dev libxss-dev libxt-dev libxtst-dev \
-            libxv-dev libxvmc-dev libxxf86vm-dev xtrans-dev libxcb-render0-dev libxcb-render-util0-dev libxcb-xkb-dev libxcb-icccm4-dev \
-            libxcb-image0-dev libxcb-keysyms1-dev libxcb-randr0-dev libxcb-shape0-dev libxcb-sync-dev libxcb-xfixes0-dev libxcb-xinerama0-dev \
-            xkb-data libxcb-dri3-dev uuid-dev libxcb-util-dev libgl-dev libglx-dev libglu1-mesa-dev libopengl-dev
           pip3 install conan
-          conan --version
-          conan profile new default --detect
+          conan config init
           conan profile update settings.build_type=Debug default
           conan profile update settings.compiler=gcc default
           conan profile update settings.compiler.version=10 default
@@ -103,9 +95,13 @@ jobs:
           conan remote add gamedev-center https://eugenekuznetsov.jfrog.io/artifactory/api/conan/gamedev-conan-local --insert 0
           Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 
+      - name: Install package dependencies
+        run: |
+          sudo apt-get install -y --no-install-recommends libopengl-dev
+
       - name: Create package
         run: |
-          conan create .
+          conan create . --conf tools.system.package_manager:mode=install --conf tools.system.package_manager:sudo=True
 
   package-windows:
     name: Test package on Windows
@@ -116,8 +112,7 @@ jobs:
       - name: Setup environment
         run: |
           pip install conan
-          conan --version
-          conan profile new default --detect
+          conan config init
           conan profile update settings.build_type=Debug default
           conan profile update settings.compiler="Visual Studio" default
           conan profile update settings.compiler.version=16 default
